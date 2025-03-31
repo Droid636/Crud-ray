@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Bienvenido al Dashboard</h1>
+    <button id="logout">Cerrar Sesión</button>
+
+    <script>
+        // Verificamos si el token existe en localStorage
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            alert('No tienes acceso. Inicia sesión primero.');
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('logout').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
