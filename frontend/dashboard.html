@@ -2,15 +2,57 @@
 <html lang="es">
 <head>
     <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .section { display: none; }
+        .active { display: block; }
+    </style>
 </head>
 <body>
-    <h1>Bienvenido al Dashboard</h1>
-    <button id="logout">Cerrar Sesión</button>
+    <div class="container mt-4">
+        <h1>Bienvenido al Dashboard</h1>
+        <button id="logout" class="btn btn-danger mb-3">Cerrar Sesión</button>
+
+        <div class="btn-group mb-3">
+            <button class="btn btn-primary section-btn" data-section="Asignatura">Asignatura</button>
+            <button class="btn btn-primary section-btn" data-section="Docentes">Docentes</button>
+            <button class="btn btn-primary section-btn" data-section="Estudiantes">Estudiantes</button>
+            <button class="btn btn-primary section-btn" data-section="Horario">Horario</button>
+            <button class="btn btn-primary section-btn" data-section="Administrativos">Administrativos</button>
+            <button class="btn btn-primary section-btn" data-section="Aula">Aula</button>
+        </div>
+
+        <!-- Sección Asignatura -->
+        <div id="Asignatura" class="section active">
+            <h2>Asignatura</h2>
+            <form id="formAsignatura">
+                <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre">
+                </div>
+                <div class="mb-3">
+                    <label for="programaEducativo" class="form-label">Programa Educativo</label>
+                    <input type="text" class="form-control" id="programaEducativo" name="programaEducativo">
+                </div>
+                <button type="submit" class="btn btn-success">Guardar</button>
+            </form>
+            <table class="table mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Programa Educativo</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaAsignatura"></tbody>
+            </table>
+        </div>
+
+    </div>
 
     <script>
-        // Verificamos si el token existe en localStorage
         const token = localStorage.getItem('token');
-
         if (!token) {
             alert('No tienes acceso. Inicia sesión primero.');
             window.location.href = 'index.html';
@@ -19,6 +61,17 @@
         document.getElementById('logout').addEventListener('click', () => {
             localStorage.removeItem('token');
             window.location.href = 'index.html';
+        });
+
+        const sectionButtons = document.querySelectorAll('.section-btn');
+        const sections = document.querySelectorAll('.section');
+
+        sectionButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const target = button.getAttribute('data-section');
+                sections.forEach(section => section.classList.remove('active'));
+                document.getElementById(target).classList.add('active');
+            });
         });
     </script>
 </body>
