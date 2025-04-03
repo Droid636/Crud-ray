@@ -28,5 +28,9 @@ app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend', 'dashboard.html'));
 });
 
+// Rutas
+app.use('/api', require('./backend/routes/asignatura'));
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Servidor corriendo en el puerto ${PORT} 🚀`));

@@ -28,21 +28,31 @@
             <h2>Asignatura</h2>
             <form id="formAsignatura">
                 <div class="mb-3">
-                    <label for="nombre" class="form-label">Nombre</label>
+                    <label class="form-label">Id de Asignatura</label>
+                    <input type="text" class="form-control" id="idAsignatura" name="idAsignatura">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Nombre</label>
                     <input type="text" class="form-control" id="nombre" name="nombre">
                 </div>
                 <div class="mb-3">
-                    <label for="programaEducativo" class="form-label">Programa Educativo</label>
-                    <input type="text" class="form-control" id="programaEducativo" name="programaEducativo">
+                    <label class="form-label">Programa Educativo</label>
+                    <input type="text" class="form-control" id="pEducativo" name="pEducativo">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Id de Docente</label>
+                    <input type="text" class="form-control" id="idDocente" name="idDocente">
                 </div>
                 <button type="submit" class="btn btn-success">Guardar</button>
             </form>
+        
             <table class="table mt-3">
                 <thead>
                     <tr>
-                        <th>ID</th>
+                        <th>ID Asignatura</th>
                         <th>Nombre</th>
                         <th>Programa Educativo</th>
+                        <th>ID Docente</th>
                     </tr>
                 </thead>
                 <tbody id="tablaAsignatura"></tbody>
@@ -52,6 +62,12 @@
     </div>
 
     <script>
+
+
+
+
+
+
         const token = localStorage.getItem('token');
         if (!token) {
             alert('No tienes acceso. Inicia sesión primero.');
@@ -73,6 +89,67 @@
                 document.getElementById(target).classList.add('active');
             });
         });
+    </script>
+
+    <script>
+        const formAsignatura = document.getElementById('formAsignatura');
+        const tablaAsignatura = document.getElementById('tablaAsignatura');
+    
+        formAsignatura.addEventListener('submit', async (e) => {
+            e.preventDefault();
+    
+            const formData = {
+                idAsignatura: document.getElementById('idAsignatura').value,
+                nombre: document.getElementById('nombre').value,
+                pEducativo: document.getElementById('pEducativo').value,
+                idDocente: document.getElementById('idDocente').value
+            };
+    
+            try {
+                const response = await fetch('/api/asignatura', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+    
+                if (response.ok) {
+                    alert('Asignatura guardada correctamente.');
+                    formAsignatura.reset();
+                    cargarAsignaturas();
+                } else {
+                    const errorMessage = await response.text();
+                    alert('Error al guardar la asignatura.'  + errorMessage);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+    
+        async function cargarAsignaturas() {
+            try {
+                const response = await fetch('/api/asignatura');
+                const asignaturas = await response.json();
+    
+                tablaAsignatura.innerHTML = '';
+                asignaturas.forEach(asignatura => {
+                    const fila = document.createElement('tr');
+                    fila.innerHTML = `
+                        <td>${asignatura.idAsignatura}</td>
+                        <td>${asignatura.nombre}</td>
+                        <td>${asignatura.pEducativo}</td>
+                        <td>${asignatura.idDocente}</td>
+                    `;
+                    tablaAsignatura.appendChild(fila);
+                });
+            } catch (error) {
+                console.error('Error al cargar asignaturas:', error);
+            }
+        }
+    
+        // Cargar las asignaturas al iniciar
+        cargarAsignaturas();
     </script>
 </body>
 </html>
