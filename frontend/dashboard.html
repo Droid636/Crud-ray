@@ -53,6 +53,7 @@
                         <th>Nombre</th>
                         <th>Programa Educativo</th>
                         <th>ID Docente</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody id="tablaAsignatura"></tbody>
@@ -62,12 +63,6 @@
     </div>
 
     <script>
-
-
-
-
-
-
         const token = localStorage.getItem('token');
         if (!token) {
             alert('No tienes acceso. Inicia sesión primero.');
@@ -94,44 +89,42 @@
     <script>
         const formAsignatura = document.getElementById('formAsignatura');
         const tablaAsignatura = document.getElementById('tablaAsignatura');
-    
+        
         formAsignatura.addEventListener('submit', async (e) => {
             e.preventDefault();
-    
+        
             const formData = {
                 idAsignatura: document.getElementById('idAsignatura').value,
                 nombre: document.getElementById('nombre').value,
                 pEducativo: document.getElementById('pEducativo').value,
                 idDocente: document.getElementById('idDocente').value
             };
-    
+        
             try {
                 const response = await fetch('/api/asignatura', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(formData)
                 });
-    
+        
                 if (response.ok) {
                     alert('Asignatura guardada correctamente.');
                     formAsignatura.reset();
                     cargarAsignaturas();
                 } else {
                     const errorMessage = await response.text();
-                    alert('Error al guardar la asignatura.'  + errorMessage);
+                    alert('Error al guardar la asignatura: ' + errorMessage);
                 }
             } catch (error) {
                 console.error('Error:', error);
             }
         });
-    
+        
         async function cargarAsignaturas() {
             try {
                 const response = await fetch('/api/asignatura');
                 const asignaturas = await response.json();
-    
+        
                 tablaAsignatura.innerHTML = '';
                 asignaturas.forEach(asignatura => {
                     const fila = document.createElement('tr');
@@ -140,6 +133,9 @@
                         <td>${asignatura.nombre}</td>
                         <td>${asignatura.pEducativo}</td>
                         <td>${asignatura.idDocente}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="eliminarAsignatura('${asignatura.idAsignatura}')">Eliminar</button>
+                        </td>
                     `;
                     tablaAsignatura.appendChild(fila);
                 });
@@ -147,9 +143,28 @@
                 console.error('Error al cargar asignaturas:', error);
             }
         }
-    
-        // Cargar las asignaturas al iniciar
+        
+        async function eliminarAsignatura(idAsignatura) {
+            if (confirm('¿Estás seguro de que deseas eliminar esta asignatura?')) {
+                try {
+                    const response = await fetch(`/api/asignatura/${idAsignatura}`, {
+                        method: 'DELETE'
+                    });
+        
+                    if (response.ok) {
+                        alert('Asignatura eliminada correctamente.');
+                        cargarAsignaturas();
+                    } else {
+                        const errorMessage = await response.text();
+                        alert('Error al eliminar la asignatura: ' + errorMessage);
+                    }
+                } catch (error) {
+                    console.error('Error al eliminar la asignatura:', error);
+                }
+            }
+        }
+        
+        // Cargar asignaturas al iniciar
         cargarAsignaturas();
     </script>
-</body>
 </html>

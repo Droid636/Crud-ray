@@ -26,5 +26,21 @@ router.get('/asignatura', async (req, res) => {
     }
 });
 
+// Ruta para eliminar una Asignatura
+router.delete('/asignatura/:idAsignatura', async (req, res) => {
+    try {
+        const { idAsignatura } = req.params;
+        const asignaturaEliminada = await Asignatura.findOneAndDelete({ idAsignatura });
+
+        if (!asignaturaEliminada) {
+            return res.status(404).json({ message: 'Asignatura no encontrada' });
+        }
+
+        res.status(200).json({ message: 'Asignatura eliminada correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error al eliminar la asignatura', error });
+    }
+});
+
 
 module.exports = router;
